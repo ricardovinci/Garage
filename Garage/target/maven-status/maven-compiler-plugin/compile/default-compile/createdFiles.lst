@@ -1,0 +1,13 @@
+com/garage/singleton/GarageSingleton$1.class
+com/garage/bo/ParkingBO.class
+com/garage/rest/BaseRestRequest.class
+com/garage/GarageConfiguration.class
+com/garage/singleton/GarageSingleton$GarageSingletonHolder.class
+com/garage/rest/BaseRestReponse.class
+com/garage/singleton/GarageSingleton.class
+com/garage/rest/GarageRest.class
+com/garage/rest/TicketResponse.class
+com/garage/controller/HomeController.class
+com/garage/be/Car.class
+com/garage/be/Ticket.class
+com/garage/bo/GarageStatusBO.class

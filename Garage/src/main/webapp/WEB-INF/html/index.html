@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+
+<div ng-app="garageApp" ng-controller="garageCtrl">
+
+<h3>Mobile Aware Garage</h4>
+		
+		<div style = "border:1px solid black;">
+			<h4>Number of vehicles at each Level</h4>
+			<div ng-repeat="level in totalCarsPerLevel">
+				Floor Level : {{level.levelId}} | Total Cars : {{level.total}}
+			</div>
+			<h4>Total Occupancy: {{totalOcuppancy}}%</h4>
+			<h4>Average Parking Time: {{avgParkingTime}} hours</h4>
+			
+			 <button type="submit" ng-click="refreshStatus()">Refresh Status</button>
+		</div>
+		<div style ="border:1px solid black;">
+		<h4>Park a your vehicle</h4>
+			<div ng-if="ticket.message">
+				{{ticket.message}}
+			</div>
+			<div ng-if="ticket.carId">
+				<p>Thanks for parking!</p>
+				<p>Please park your car at level: {{ticket.levelId}}</p>
+				<p>Here is you car id: {{ticket.carId}}</p>
+			</div>
+			
+			<button type="submit" ng-click="parkCar()"> Park Me!</button>
+			
+		</div>
+		<div style ="border:1px solid black;">
+		<h4>Exit garage</h4>
+			
+			<form ng-submit="exitGarage()">
+				Please insert your ticket(Car Id): 
+			    <input ng-model="carId"/>
+			    <button type="submit">Exit Garage</button>
+			    
+			   
+			    <div ng-if="exitTicket.message">
+					{{exitTicket.message}}
+				</div>
+			<div ng-if="exitTicket.carId">
+				<p>Thanks for parking!</p>
+				<p>You parked at level: {{exitTicket.levelId}}</p>
+				<p>You car id: {{exitTicket.carId}}</p>
+				<p>Time parked: {{exitTicket.totalHours}}</p>
+				<p>Entry time: {{exitTicket.entryDate}}</p>
+				<p>Total amount due: {{exitTicket.totalPrice}}</p>
+			</div>
+			    
+			</form>
+			
+		</div>
+		
+		
+
+
+
+</div>
+<script>
+var app = angular.module('garageApp', []);
+app.controller('garageCtrl', function($scope,$http) {
+		
+	$scope.refreshStatus = function(){
+		
+		$http.get("/rest/garage/getTotalOccupancy.json").then(function(response) {
+			$scope.totalOcuppancy = response.data.result;
+		});
+		
+		$http.get("/rest/garage/getAverageParkingTime.json").then(function(response) {
+			$scope.avgParkingTime = response.data.result;
+		});
+		
+		$http.get("/rest/garage/getTotalCarsPerLevel.json").then(function(response) {
+			$scope.totalCarsPerLevel = response.data;
+		});
+    } 
+	
+	$scope.parkCar = function(){
+		$http.get("/rest/garage/checkIn.json").then(function(response) {
+			$scope.ticket = response.data;
+		});
+		$scope.refreshStatus();
+	}
+	
+	$scope.exitGarage = function(){
+		var request = {
+				carId: $scope.carId
+	            };
+									
+
+		 $http.post("/rest/garage/checkOut.json",request).success(function(response) {
+	            $scope.exitTicket = response;
+	        });
+		 
+		$scope.refreshStatus();
+	}
+	
+	$scope.refreshStatus();
+		
+});
+</script> 
+
+</body>
+</html>
